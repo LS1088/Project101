@@ -3,6 +3,7 @@ import random
 import time
 import threading
 import sys
+import math
 
 def main():
     print ("hello world")
@@ -10,8 +11,8 @@ def main():
 if __name__ == '__main__':
     None
 
-##version 0.0.1
-version = '0.0.1'
+##version 0.0.2
+version = '0.0.2'
 author = 'Pedololicon'
 print("Project101, \nVersion", version, "\nAuthor:", author, "\n\nWelcome to this simple text-based adventure(unnamed game). Help is accessed with number 0 as input.")
 ##Trying to make a simple text-based adventure
@@ -21,6 +22,9 @@ print("Project101, \nVersion", version, "\nAuthor:", author, "\n\nWelcome to thi
 enemyDeathCounter = 0
 heroDeathCounter = 0
 combatOn = 0
+defenseReductionMultiplier = 0.06
+
+#Base stats
 
 class stats(object):
     def __init__(self, name, currentHP, maxHP, attack, defence, speed, exp, maxExp, level, weapon):
@@ -37,19 +41,22 @@ class stats(object):
         
 hero = stats('placeholder', 100, 100, 10, 0, 1, 0, 100, 1, 'Worn out sword')
 
-dummy = stats('dummy target', 1, 0, 0, 0, 0, 0, 0, 0, 0)
+dummy = stats('dummy target', 1, 0, 0, 0, 0, 0, 0, 0, 'placeHolderWeapon')
 
-greenSlime = stats('green slime', 20, 20, 30, 0, 0.66, 10, 2**31-1, 1, 'none')
-bat = stats('bat', 25, 25, 30, 1, 1.2, 15, 2**31-1, 1, 'none')
+greenSlime = stats('green slime', 20, 20, 5, 0, 0.66, 50, 2**31-1, 1, 'none')
+bat = stats('bat', 25, 25, 10, 1, 1.19, 15, 2**31-1, 1, 'none')
+yellowSlime = stats('yellow slime', 35, 35, 15, 1, 0.7, 23, 2**31-1, 2, 'none')
 
 #Strings
+
 q1 = "\nChoose a name for your character"
 str1 = "\nYou are awaken by the stench of rotten corpses. You can't remember anything. \nThe unfamiliar surroundings confuses you, but you must get out of here."
-str2 = "\nYou continue your adventure."
+str2 = "---------------------------------------------\nYou continue your adventure."
 
 #Functions
+
 def gameHelp():
-    print('\nShortcuts: 1 - explore, 2 - rest, 3 - check stats, 0 - help')
+    print('\nShortcuts: 1 - explore, 2 - rest, 9 - check stats, 0 - help')
     print('\nCurrent RNG: Explore - 60% combat, 10% encounter, 10% story, 10% event, 10% loot;\nRest - 7.5% combat, 5% encounter, 87.5% heal.')
     return
 
@@ -57,10 +64,10 @@ def askAdventure(question, *args, **kwargs):
     print (question)
     while True:
         if args:
-            print ("\nWhat is your next action?")
+            print ("---------------------------------------------\nWhat is your next action?")
             for num, ar in enumerate(args):
                 print (num+1, ar)
-            print('0 help')
+            print('9 Check stats\n0 help\n---------------------------------------------')
         ans = input()
         if args:
             if ans == 'explore' or ans == '1':
@@ -69,16 +76,18 @@ def askAdventure(question, *args, **kwargs):
             elif ans == 'rest' or ans == '2':
                 rest()
                 break
-            elif ans == 'check stats' or ans == '3':
+            elif ans == 'check stats' or ans == '9':
                 checkStats()
             elif ans == 'help' or ans == '0':
-                gameHelp()            
+                gameHelp()
+            else:
+                print('\nPlease enter a valid input.')
         else:
             break
     return ans
 
 def checkStats():
-    print ('\nName: ', hero.name, '\nHP: ', hero.currentHP, '/', hero.maxHP, '\nCurrent weapon: ', hero.weapon, '\nAttack', hero.attack, 'Defence', hero.defence, 'Speed', hero.speed)
+    print ('Name:', hero.name, ' Level', hero.level, 'exp:', '%s/%s' % (hero.exp, hero.maxExp), '\nHP:', math.ceil(hero.currentHP), '/', math.ceil(hero.maxHP), '\nAttack', hero.attack, 'Defence', hero.defence, 'Speed', hero.speed, '\nCurrent weapon: ', hero.weapon,)
     
 def explore():
     print('\nexplore function')
@@ -107,13 +116,13 @@ def rest():
     return
 
 def restHeal():
-    healAmount = random.randrange((hero.maxHP - hero.currentHP)/2 + 10)
+    healAmount = random.randrange(int(round(hero.maxHP - hero.currentHP) / 2 + 1)) + 10
+    hero.currentHP += healAmount
     if hero.currentHP >= hero.maxHP:
         hero.currentHP = hero.maxHP
-        print('\nYou are at full health!', '(%s/%s)' % (hero.currentHP, hero.maxHP))
+        print('\nYou are at full health!', '(%s/%s)' % (math.ceil(hero.currentHP), math.ceil(hero.maxHP)))
     else:
-        hero.currentHP += healAmount
-        print('\nYou healed for', healAmount, 'points, ', '(%s/%s)' % (hero.currentHP, hero.maxHP))
+        print('\nYou healed for', healAmount, 'points, ', '(%s/%s)' % (math.ceil(hero.currentHP), math.ceil(hero.maxHP)))
     return
 
 def combatSelect(enemy):
@@ -122,7 +131,7 @@ def combatSelect(enemy):
         if randomNumber < 2000:
             combatSelect(bat)
         elif randomNumber < 3000 and hero.level > 1:
-            combatSelect(wildDog)
+            combatSelect(yellowSlime)
         elif randomNumber < 4000 and hero.level > 3:
             combatSelect(giantCrab)
         elif randomNumber < 5000 and hero.level > 5:
@@ -130,15 +139,15 @@ def combatSelect(enemy):
         elif randomNumber < 6000 and hero.level > 6:
             combatSelect(redSlime)
         elif randomNumber < 7000 and hero.level > 7:
-            combatSelect(hyena)
-        elif randomNumber < 8000 and hero.level > 7:
             combatSelect(lion)
+        elif randomNumber < 8000 and hero.level > 7:
+            combatSelect(vampire)
         elif randomNumber < 9000 and hero.level > 8:
-            combatSelect(manticore)
+            combatSelect(greenDragon)
         elif randomNumber < 9500 and hero.level > 8:
             combatSelect(kingSlime)
         elif randomNumber < 10000 and hero.level > 10:
-            combatSelect(dragon)        
+            combatSelect(redDragon)        
         else:
             combatSelect(greenSlime)
     else:
@@ -165,13 +174,19 @@ def heroAttack():
         if dummy.currentHP <= 0:
             enemyDeathCounter = 1
             print(dummy.name, 'has been defeated. You are victorious!')
+            hero.exp += dummy.exp
+            lvlupCheck()
+            time.sleep(1)
             combatOn = 0
             break
         else:
-            damageDone = hero.attack - dummy.defence
+            damageDone = hero.attack * (1 - (dummy.defence * defenseReductionMultiplier) / (1 + defenseReductionMultiplier))
             dummy.currentHP -= damageDone
-            print(hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (dummy.currentHP, dummy.maxHP))    
-            time.sleep(1 / hero.speed)
+            if dummy.currentHP <= 0:
+                print (hero.name, 'hit', dummy.name, 'for', round(damageDone, 1), 'points! HP:', '(%s/%s)' % (0, math.ceil(dummy.maxHP)))
+            else:
+                print(hero.name, 'hit', dummy.name, 'for', round(damageDone, 1), 'points! HP:', '(%s/%s)' % (math.ceil(dummy.currentHP), math.ceil(dummy.maxHP)))
+                time.sleep(1 / hero.speed)
     return
 
 def enemyAttack():
@@ -181,15 +196,30 @@ def enemyAttack():
     while enemyDeathCounter == 0:
         if hero.currentHP <= 0:
             heroDeathCounter = 1
-            print('you have died')
             combatOn = 0
+            print(hero.name, 'has fallen')
             break
         else:
-            damageDone = dummy.attack - hero.defence
+            damageDone = dummy.attack * (1 - (hero.defence * defenseReductionMultiplier) / (1 + defenseReductionMultiplier))
             hero.currentHP -= damageDone
-            print(dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (hero.currentHP, hero.maxHP))    
-            time.sleep(1 / dummy.speed)
+            if hero.currentHP <= 0:
+                print (dummy.name, 'hit you for', round(damageDone, 1), 'points! HP:', '(%s/%s)' % (0, math.ceil(hero.maxHP)))
+            else:            
+                print(dummy.name, 'hit you for', round(damageDone, 1), 'points! HP:', '(%s/%s)' % (math.ceil(hero.currentHP), math.ceil(hero.maxHP)))
+                time.sleep(1 / dummy.speed)
     return    
+    
+def lvlupCheck():
+    if hero.exp >= hero.maxExp:
+        hero.exp -= hero.maxExp
+        hero.level += 1
+        hero.currentHP += 10
+        hero.maxHP += 10
+        hero.attack += 1
+        hero.defence += 1
+        print('---------------------------------------------\nYou have leveled up!\n---------------------------------------------')
+        checkStats()
+    return
     
 def encounter():
     print('\nencounter function was called')
@@ -210,13 +240,9 @@ def loot():
 #Start of I/O
 
 hero.name = askAdventure(q1)
-askAdventure(str1, 'explore', 'rest', 'check stats')
+askAdventure(str1, 'explore')
 time.sleep(1)
 while True:
-    while combatOn == 0:    
-        if heroDeathCounter == 1:
-            print(hero.name, 'has fallen')
-            sys.exit()
-        else:
-            askAdventure(str2, 'explore', 'rest', 'check stats')
-            time.sleep(1)            
+    while combatOn == 0 and heroDeathCounter == 0: 
+        askAdventure(str2, 'explore', 'rest')
+        time.sleep(1)
