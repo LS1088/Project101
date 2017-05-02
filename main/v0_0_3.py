@@ -20,8 +20,7 @@ combatOn = 0
 
 #Variables
 defenseReductionMultiplier = 0.06  #Every point of defense is equal to 6% effective HP increase. Shamelessly copied from wc3 and dota. Due to change in the future.
-speedModifier = 3  #Changes combat speed, higher = slower
-options = {'explore':1, 'rest':2, 'check stats':9, 'help':0}
+speedModifier = 0.01  #Changes combat speed, higher = slower
 
 #Base stats
 class stats(object):
@@ -52,16 +51,20 @@ pitchfork = weapons('pitchfork', 2)
 rustySword = weapons('rusty sword', 4)
 
 #Strings
+line = "---------------------------------------------"
 q1 = "\nChoose a name for your character"
 str1 = "You are awaken by the stench of rotten corpses. You can't remember anything. \nThe unfamiliar surroundings confuses you, but you must get out of here."
-str2 = "---------------------------------------------\nYou continue your adventure."
+str2 = "You continue your adventure."
 
 #Functions
 def gameHelp():
     print('\nCurrent RNG: Explore - 60% combat, 10% encounter, 10% story, 10% event, 10% loot;\nRest - 7.5% combat, 5% encounter, 87.5% heal.')
     return
 
-def askAdventure(question, *args, **kwargs):  #
+#Main interface
+options = {'explore':1, 'rest':2, 'check stats':9, 'help':0}
+
+def askAdventure(question, *args):  #
     print (question)
     optionGiven = {}
     while True:
@@ -74,15 +77,28 @@ def askAdventure(question, *args, **kwargs):  #
         ans = input()
         print('---------------------------------------------')
         if args:
-            if ans == 'explore' or int(ans) == optionGiven['explore']:
+            if ans.isdigit():
+                if int(ans) == optionGiven['explore']:
+                    explore()
+                    break                
+                elif int(ans) == optionGiven['rest']:
+                    rest()
+                    break
+                elif int(ans) == optionGiven['check stats']:
+                    checkStats()
+                elif int(ans) == optionGiven['help']:
+                    gameHelp()
+                else:
+                    print('Please enter a valid number.')
+            elif ans == 'explore':
                 explore()
                 break
-            elif ans == 'rest' or int(ans) == optionGiven['rest']:
+            elif ans == 'rest':
                 rest()
                 break
-            elif ans == 'check stats' or int(ans) == optionGiven['check stats']:
+            elif ans == 'check stats':
                 checkStats()
-            elif ans == 'help' or int(ans) == optionGiven['help']:
+            elif ans == 'help':
                 gameHelp()
             else:
                 print('Please enter a valid input.')
@@ -133,12 +149,12 @@ bat = stats('bat', 25, 25, 7, 1, 1.19, 40, 2**31-1, 1, 'none')
 yellowSlime = stats('yellow slime', 35, 35, 10, 1, 0.69, 40, 2**31-1, 2, 'none')
 giantCrab = stats('giant crab', 60, 60, 15, 4, 0.49, 75, 2**31-1, 4, 'none')
 wolf = stats('wolf', 50, 50, 12, 1, 1.6, 100, 2**31-1, 5, 'none')
-redSlime = stats('bat', 80, 80, 22, 2, 0.76, 150, 2**31-1, 6, 'none')
-direWolf = stats('bat', 75, 75, 14, 1, 1.7, 220, 2**31-1, 7, 'none')
-vampire = stats('bat', 130, 130, 21, 3, 1.3, 300, 2**31-1, 8, 'none')
-greenDragon = stats('bat', 110, 100, 40, 6, 0.901, 440, 2**31-1, 9, 'none')
-kingSlime = stats('bat', 300, 300, 75, 2, 0.81, 600, 2**31-1, 9, 'none')
-redDragon = stats('bat', 200, 200, 100, 12, 0.921, 1200, 2**31-1, 10, 'none')
+redSlime = stats('red slime', 80, 80, 22, 2, 0.76, 150, 2**31-1, 6, 'none')
+direWolf = stats('dire wolf', 75, 75, 14, 1, 1.7, 220, 2**31-1, 7, 'none')
+vampire = stats('vampire', 130, 130, 21, 3, 1.3, 300, 2**31-1, 8, 'none')
+greenDragon = stats('green dragon', 110, 100, 40, 6, 0.901, 440, 2**31-1, 9, 'none')
+kingSlime = stats('king slime', 300, 300, 75, 2, 0.81, 600, 2**31-1, 9, 'none')
+redDragon = stats('red dragon', 200, 200, 100, 12, 0.921, 1200, 2**31-1, 10, 'none')
 
 def combatSelect(enemy):
     if enemy == 'random':
@@ -235,7 +251,7 @@ def enemyAttack():
 def lvlupCheck():
     if hero.exp >= hero.maxExp:
         hero.exp -= hero.maxExp
-        hero.maxExp = math.ceil(hero.maxExp ** 1.15)
+        hero.maxExp = math.ceil(hero.maxExp ** 1.14)
         hero.level += 1
         hero.currentHP += 10
         hero.maxHP += 10
@@ -271,9 +287,9 @@ def bgm():
 threading.Thread(target = bgm).start()  #Testing sound
 
 hero.name = askAdventure(q1)
-askAdventure(str1, 'explore', 'rest','check stats','help')
+askAdventure(str1, 'explore', 'rest', 'check stats', 'help')
 time.sleep(1)
 while True:
     while combatOn == 0 and heroDeathCounter == 0: 
-        askAdventure(str2, 'explore', 'rest','check stats','help')
+        askAdventure(str2, 'explore', 'rest', 'check stats', 'help')
         time.sleep(1)
