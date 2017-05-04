@@ -69,6 +69,7 @@ def askAdventure(question, *args, **kwargs):
                 print (num+1, ar)
             print('9 Check stats\n0 help\n---------------------------------------------')
         ans = input()
+        print('---------------------------------------------')
         if args:
             if ans == 'explore' or ans == '1':
                 explore()
@@ -90,7 +91,6 @@ def checkStats():
     print ('Name:', hero.name, ' Level', hero.level, 'exp:', '%s/%s' % (hero.exp, hero.maxExp), '\nHP:', math.ceil(hero.currentHP), '/', math.ceil(hero.maxHP), '\nAttack', hero.attack, 'Defence', hero.defence, 'Speed', hero.speed, '\nCurrent weapon: ', hero.weapon,)
     
 def explore():
-    print('\nexplore function')
     randomNumber = random.randrange(10000)
     if randomNumber < 6000:
         combatSelect('random')
@@ -105,7 +105,6 @@ def explore():
     return
     
 def rest():
-    print('\nrest function')
     randomNumber = random.randrange(10000)
     if randomNumber < 750:
         combatSelect('random')
@@ -162,6 +161,7 @@ def combat(enemy):
     heroDeathCounter = 0
     combatOn = 1
     dummy.__dict__ = enemy.__dict__.copy()
+    print('You are in combat with', dummy.name, '\n---------------------------------------------')
     threading.Thread(target = heroAttack).start()
     threading.Thread(target = enemyAttack).start()
     return
@@ -212,6 +212,7 @@ def enemyAttack():
 def lvlupCheck():
     if hero.exp >= hero.maxExp:
         hero.exp -= hero.maxExp
+        hero.maxExp = math.ceil(hero.maxExp ** 1.15)
         hero.level += 1
         hero.currentHP += 10
         hero.maxHP += 10
