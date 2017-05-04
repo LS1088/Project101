@@ -1,6 +1,7 @@
 ----------------------------
 Project for python practise.
 Stable release in /binaries/
+WARNING: CURRENT EXE DOES NOT RUN ON WIN7 64 BIT
 ----------------------------
 CHANGELOGS/NOTES:
 ----------------------------
