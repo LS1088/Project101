@@ -1,7 +1,6 @@
 ----------------------------
 Project for python practise.
 Stable release in /binaries/
-WARNING: CURRENT EXE DOES NOT RUN ON WIN7 64 BIT
 ----------------------------
 NOTES:
 ----------------------------
@@ -20,7 +19,7 @@ Balancing enemies
 More Dialogue Functions -> Events -> Story ->                GUI -> Sprites
                                             |
                                             V
-Loot <- Items <- Inventory -> Merchants <- NPC               BGM <-> SFX
+        Items <- Inventory -> Merchants <- NPC               BGM <-> SFX
           |
           V
        Weapons -> Effects -> Skills
