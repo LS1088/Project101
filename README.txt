@@ -26,6 +26,7 @@ More Dialogue Functions -> Events -> Story ->                GUI -> Sprites
 ----------------------------
 CHANGELOG:
 ----------------------------
+v0.0.6, 05/05/17 - Added inventory 
 v0.0.5, 05/05/17 - Replaced BGM.wav, finished item drops, added new items, added colored text in terminal output.
 v0.0.4, 04/05/17 - Added support for windows7 system.
 v0.0.3, 02/05/17 - None

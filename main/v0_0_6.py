@@ -2,7 +2,7 @@ import random, time, threading, sys, math, winsound, numpy
 from colorama import init, Fore, Back, Style
 init(convert=True, autoreset=False)
 
-version = '0.0.5'
+version = '0.0.6'
 author = 'ls1088'
 print(Fore.GREEN + Style.BRIGHT + "Project101, \nVersion", version, "\nAuthor:", author, "\nBGM: Hatsune Miku - (UNICODEPLACEHOLDER).\nCurrent combat system is fully automatic." + Fore.RESET + Style.RESET_ALL + "\n\nWelcome to (unnamed game). Input either the full text or shortcut number.")
 time.sleep(0.1)
