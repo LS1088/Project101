@@ -8,19 +8,29 @@ print(Fore.GREEN + Style.BRIGHT + "Project101, \nVersion", version, "\nAuthor:",
 time.sleep(0.1)
 
 '''
-TRIGGERS, VARIABLES AND CLASSES
+TRIGGERS, VARIABLES, CLASSES AND SETTINGS
 '''
+###################################
+expMultiplier = 1
+#Amount of exp gained. 1 = Base amount.
+defenceReductionMultiplier = 0.06   
+#Every point of defence is equal to 6% effective HP increase. (Same with wc3 and dota) Due to change in the future.
+speedModifier = 1
+#Changes combat speed, higher = slower
+lootChance = 0.86
+#Chance of calling loot function after combat victory. 1 = Always, 0 = Never.
 enemyDeathCounter = 0
 heroDeathCounter = 0
 combatOn = 0
-defenseReductionMultiplier = 0.06   
-#Every point of defense is equal to 6% effective HP increase. (Same with wc3 and dota) Due to change in the future.
-speedModifier = 1
-#Changes combat speed, higher = slower
+options = {'explore': 1, 'rest': 2, 'inventory': 8, 'check stats': 9, 'help': 0}
 weaponDropDic = {}
 weaponNameDic = {}
-options = {'explore': 1, 'rest': 2, 'inventory': 8, 'check stats': 9, 'help': 0}
 inventory = {}
+###########################################
+#inventory = {'stick':1000}
+
+if expMultiplier != 1 or speedModifier !=1 or lootChance != 0.86 or len(inventory) != 0:
+    print(Fore.RED, Style.BRIGHT, "\nWARNING: CUSTOM SETTINGS DETECTED. Exp multiplier:", expMultiplier, "Combat speed:", speedModifier, "Loot chance:", lootChance, "Starting inventory:", inventory, Fore.RESET, Style.RESET_ALL)
 
 class stats(object):
     def __init__(self, name, currentHP, maxHP, attack, defence, speed, exp, maxExp, level, weapon):
@@ -39,10 +49,10 @@ class items():
     pass
 
 class weapons(object):
-    def __init__(self, name, attack, defense, specialEffect, dropRate, level):
+    def __init__(self, name, attack, defence, specialEffect, dropRate, level):
         self.name = name
         self.attack = attack
-        self.defense = defense
+        self.defence = defence
         self.specialEffect = specialEffect
         self.dropRate = dropRate
         self.level = level
@@ -52,39 +62,39 @@ class weapons(object):
 none = weapons('none', 0, 0, 'none', 10000, 0)
 
 #one handed
-stick = weapons('stick', 1, 0, 'none', 5000, 1)
-wand = weapons('wand', 1, 0, 'magic1', 1000, 3)
-oakWand = weapons('oak wand', 1, 0, 'magic2', 800, 6)
+stick = weapons('stick', 1, 0, 'none', 4000, 1)
+wand = weapons('wand', 1, 0, 'magic1', 1800, 3)
+oakWand = weapons('oak wand', 1, 0, 'magic2', 400, 6)
 
-rustySword = weapons('rusty sword', 2, 1, 'block', 4000, 2)
+rustySword = weapons('rusty sword', 2, 1, 'block', 3000, 2)
 ironSword = weapons('iron sword', 5, 1, 'block', 1000, 4)
-steelSword = weapons('steel sword', 6, 2, 'block', 1000, 6)
+steelSword = weapons('steel sword', 6, 2, 'block', 400, 6)
 
-rustyDagger = weapons('rusty dagger', 2, 0, 'assassination', 1000, 3)
+rustyDagger = weapons('rusty dagger', 2, 0, 'assassination', 2000, 3)
 ironDagger = weapons('iron dagger', 3, 0, 'assassination', 1000, 4)
-steelDagger = weapons('steel dagger', 4, 0, 'assassination', 1000, 6)
+steelDagger = weapons('steel dagger', 4, 0, 'assassination', 450, 6)
 
-hatchet = weapons('hatchet', 4, 0, 'none', 1000, 3)
-ironAxe = weapons('iron axe', 6, 0, 'none', 1000, 5)
-steelAxe = weapons('steel axe', 8, 0, 'none', 1000, 7)
+hatchet = weapons('hatchet', 4, 0, 'none', 1800, 3)
+ironAxe = weapons('iron axe', 6, 0, 'none', 700, 5)
+steelAxe = weapons('steel axe', 8, 0, 'none', 300, 7)
 
 #two handed
-ironGreatsword = weapons('iron greatsword', 6, 2, 'block', 1000, 5)
-steelGreatsword = weapons('steel greatsword', 8, 3, 'block', 1000, 8)
+ironGreatsword = weapons('iron greatsword', 6, 2, 'block', 800, 5)
+steelGreatsword = weapons('steel greatsword', 8, 3, 'block', 200, 8)
 
-shortBow = weapons('short bow', 3, 0, 'ranged attack', 1000, 2)
-huntingBow = weapons('hunting bow', 5, 0, 'ranged attack', 1000, 5)
-compositeBow = weapons('composite bow', 7, 0, 'ranged attack', 1000, 8)
-longBow = weapons('long bow', 10, 0, 'ranged attack', 1000, 9)
-recurveBow = weapons('recurve bow', 13, 0, 'ranged attack', 1000, 10)
+shortBow = weapons('short bow', 3, 0, 'ranged attack', 3000, 2)
+huntingBow = weapons('hunting bow', 5, 0, 'ranged attack', 800, 5)
+compositeBow = weapons('composite bow', 7, 0, 'ranged attack', 250, 8)
+longBow = weapons('long bow', 10, 0, 'ranged attack', 150, 9)
+recurveBow = weapons('recurve bow', 13, 0, 'ranged attack', 100, 10)
 
 hammer = weapons('hammer', 6, 0, 'stagger', 1000, 4)
-sledgeHammer = weapons('sledge hammer', 10, 0, 'stagger', 1000, 7)
-giantHammer = weapons('giant hammer', 15, 0, 'stunning attack', 1000, 10)
+sledgeHammer = weapons('sledge hammer', 10, 0, 'stagger', 350, 7)
+giantHammer = weapons('giant hammer', 15, 0, 'stunning attack', 100, 10)
 
-pitchfork = weapons('pitchfork', 1, 1, 'none', 1000, 1)
-ironSpear = weapons ('iron spear', 4, 1, 'none', 1000, 3)
-staff = weapons('staff', 3, 2, 'magic1', 1000, 4)
+pitchfork = weapons('pitchfork', 1, 1, 'none', 3333, 1)
+ironSpear = weapons ('iron spear', 4, 1, 'none', 2000, 3)
+staff = weapons('staff', 3, 2, 'magic1', 1600, 4)
 
 class armor (object):
     pass
@@ -100,8 +110,8 @@ wolf = stats('wolf', 50, 50, 12, 1, 1.6, 100, 2**31-1, 5, 'none')
 redSlime = stats('red slime', 80, 80, 22, 2, 0.76, 150, 2**31-1, 6, 'none')
 direWolf = stats('dire wolf', 75, 75, 14, 1, 1.7, 220, 2**31-1, 7, 'none')
 vampire = stats('vampire', 130, 130, 21, 3, 1.3, 300, 2**31-1, 8, 'none')
-greenDragon = stats('green dragon', 110, 100, 40, 6, 0.901, 440, 2**31-1, 9, 'none')
-kingSlime = stats('king slime', 300, 300, 75, 2, 0.81, 600, 2**31-1, 9, 'none')
+greenDragon = stats('green dragon', 110, 100, 30, 6, 0.901, 440, 2**31-1, 9, 'none')
+kingSlime = stats('king slime', 300, 300, 40, 2, 0.81, 600, 2**31-1, 9, 'none')
 redDragon = stats('red dragon', 200, 200, 100, 12, 0.921, 1200, 2**31-1, 10, 'none')
 
 '''
@@ -165,11 +175,15 @@ def askAdventure(question, *args):  #
     return ans
 
 def checkStats():
-    print ('Name:', hero.name, ' Level', hero.level, 'exp:', '%s/%s' % (hero.exp, hero.maxExp), '\nHP:', math.ceil(hero.currentHP), '/', math.ceil(hero.maxHP), '\nAttack', hero.attack, 'Defence', hero.defence, 'Speed', hero.speed, '\nCurrent weapon: ', hero.weapon.name,)
+    print ('Name:', hero.name, ' Level', hero.level, 'exp:', '%s/%s' % (hero.exp, hero.maxExp), '\nHP:', math.ceil(hero.currentHP), '/', math.ceil(hero.maxHP), '\nAttack', '%s(+%s)' % (hero.attack - hero.weapon.attack, hero.weapon.attack), 'Defence', '%s(+%s)' % (hero.defence - hero.weapon.defence, hero.weapon.defence), 'Speed', hero.speed, '\nCurrent weapon:', Fore.YELLOW + Style.BRIGHT + hero.weapon.name + Fore.RESET + Style.RESET_ALL, '\nWeapon attack:', hero.weapon.attack, 'Weapon defence:', hero.weapon.defence, 'Special Effect:', hero.weapon.specialEffect)
+    print(Fore.GREEN + Style.BRIGHT + "Press enter to continue..." + Fore.RESET + Style.RESET_ALL)
+    input()
     
 def gameHelp():
+    print('Defeat enemies in combat in order to gain exp and items. Currently most weapons only start dropping when you reach a certain level.')
     print('\nCurrent RNG: Explore - 60% combat, 10% encounter, 10% story, 10% event, 10% loot;\nRest - 7.5% combat, 5% encounter, 87.5% heal.')
-    return
+    print(Fore.GREEN + Style.BRIGHT + "Press enter to continue..." + Fore.RESET + Style.RESET_ALL)
+    input()
     
 def explore():
     randomNumber = random.randrange(10000)
@@ -271,14 +285,14 @@ def heroAttack():
         if dummy.currentHP <= 0:  ##Victory
             enemyDeathCounter = 1
             print(dummy.name, 'has been defeated. You are victorious!')
-            loot(dummy.level, 'combatLoot')
-            hero.exp += dummy.exp
+            if random.random() <= lootChance:
+                loot(dummy.level, 'combatLoot')
+            hero.exp += (dummy.exp * expMultiplier)
             lvlupCheck()
-            time.sleep(1)
             combatOn = 0
             break
         else:
-            damageDone = math.floor(hero.attack * (1 - (dummy.defence * defenseReductionMultiplier) / (1 + defenseReductionMultiplier)))
+            damageDone = math.floor(hero.attack * (1 - (dummy.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
             dummy.currentHP -= damageDone
             damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
             if dummy.currentHP <= 0:
@@ -297,13 +311,13 @@ def enemyAttack():
             heroDeathCounter = 1
             combatOn = 0
             print(hero.name, 'has fallen')
-            replay = input('%s\n%s\n%s\n' % (line, 'Input anything to restart.', line))
+            print('%s\n%s\n%s\n' % (line, Fore.GREEN + Style.BRIGHT + "Press enter to restart the game." + Fore.RESET + Style.RESET_ALL, line))
+            input()
             winsound.Beep(900, 200)
-            if replay:
-                main()
+            main()
             break
         else:
-            damageDone = math.floor(dummy.attack * (1 - (hero.defence * defenseReductionMultiplier) / (1 + defenseReductionMultiplier)))
+            damageDone = math.floor(dummy.attack * (1 - (hero.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
             hero.currentHP -= damageDone
             damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
             if hero.currentHP <= 0:
@@ -322,7 +336,7 @@ def lvlupCheck():
         hero.maxHP += 10
         hero.attack += 1
         hero.defence += 1
-        print('%s\n%s\n%s' % (line, Fore.RED + Back.WHITE + Style.BRIGHT + 'You have leveled up!' + Fore.RESET + Back.RESET + Style.RESET_ALL, line))
+        print('%s\n%s\n%s' % (line, Fore.GREEN + Back.GREEN + Style.BRIGHT + 'You have leveled up! ' + str(int(hero.level) - 1) + ' ---> ' + str(hero.level) + Fore.RESET + Back.RESET + Style.RESET_ALL, line))
         time.sleep(1)
         checkStats()
     return
@@ -370,7 +384,7 @@ def loot(lootLevel, lootMessage):
     return
 
 def checkInventory():
-    useItem = ''
+    useItem = 'placeholdertext'
     itemCheckTrigger = 0
     print("Inventory")
     print(line)
@@ -378,42 +392,35 @@ def checkInventory():
         print("You don't have any items.")
     else:
         for key, value in inventory.items():
+            print(value, "X", Fore.YELLOW + Style.BRIGHT + weaponNameDic[key].name + Fore.RESET + Style.RESET_ALL, end = " | ")
             if weaponNameDic[key].__class__ == weapons:
-                print('Weapon - ', end = "")
-            print(value, "X", weaponNameDic[key].name)
+                print('Attack', weaponNameDic[key].attack, 'Defence:', weaponNameDic[key].defence, 'Special Effect:', weaponNameDic[key].specialEffect)
         print(line)
-        ans = input("Commands: use/inspect, any other input to exit.\n")
-        if ans == 'use':
-            while useItem != 'exit':
-                useItem = input("Enter the name of the item you wish to use. Enter 'exit' to exit the loop.\n")
-                for key, value in inventory.items():
-                    itemCheckTrigger = 0
-                    if useItem == key:
-                        if key in weaponNameDic:
-                            hero.weapon = weaponNameDic[key]
-                            print(Fore.YELLOW + Style.BRIGHT + key + Fore.RESET + Style.RESET_ALL, "was equipped.")
-                        inventory[key] -= 1
-                        if inventory[key] == 0:
-                            del inventory[key]
-                        itemCheckTrigger = 1
-                        time.sleep(1)
-                        break
-                if useItem != 'exit' and itemCheckTrigger == 0:
-                    print("No such item exists in your inventory.")
-                    time.sleep(1)
-        if ans == 'inspect':
-            while useItem != 'exit':
-                useItem = input("Enter the name of the item you wish to inspect. Enter 'exit' to exit the loop.\n")
-                for key, value in inventory.items():
-                    itemCheckTrigger = 0
-                    if useItem == key:
-                        print(weaponNameDic[key].__dict__)
-                        itemCheckTrigger = 1
-                        time.sleep(1)      
-                        break
-                if useItem != 'exit' and itemCheckTrigger == 0:
-                    print("No such item exists in your inventory.")
-                    time.sleep(1)
+        while useItem != '':
+            useItem = input("Enter the name of the item you wish to use. Input nothing to go back.\n")
+            for key, value in inventory.items():
+                itemCheckTrigger = 0
+                if useItem == key:
+                    if key in weaponNameDic:
+                        hero.attack -= hero.weapon.attack
+                        hero.defence -= hero.weapon.defence
+                        if hero.weapon.name != 'none':
+                            if hero.weapon.name in inventory.keys():
+                                inventory[hero.weapon.name] += 1
+                            else:
+                                inventory[hero.weapon.name] = 1
+                            print(Fore.YELLOW + Style.BRIGHT + hero.weapon.name + Fore.RESET + Style.RESET_ALL, "was unequiped.", end = " ")
+                        hero.weapon = weaponNameDic[key]
+                        hero.attack += weaponNameDic[key].attack
+                        hero.defence += weaponNameDic[key].defence
+                        print(Fore.YELLOW + Style.BRIGHT + key + Fore.RESET + Style.RESET_ALL, "was equipped.")
+                    inventory[key] -= 1
+                    if inventory[key] == 0:
+                        del inventory[key]
+                    itemCheckTrigger = 1
+                    break
+            if useItem != '' and itemCheckTrigger == 0:
+                print("No such item exists in your inventory.")
                         
 #Sound
 def bgm():
