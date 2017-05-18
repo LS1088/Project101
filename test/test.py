@@ -262,9 +262,8 @@ def combat(enemy):
     heroDeathCounter = 0
     combatOn = 1    
     availEnemyList = []
-    availEnemyAppearRate = []    
-    #weighted random choice     
-    if enemy == 'random':
+    availEnemyAppearRate = []         
+    if enemy == 'random':       #Weighted random choice
         for i in enemyAppearRateDict:
             if enemyNameDict[i].level <= hero.level + 1 and enemyNameDict[i].level >= hero.level - 3:
                 availEnemyList.append(i)
@@ -273,57 +272,56 @@ def combat(enemy):
         for i in enumerate(availEnemyAppearRate):
             availEnemyAppearRate[list(i)[0]] = availEnemyAppearRate[list(i)[0]] / availEnemyAppearRate_Total
         combat(enemyNameDict[numpy.random.choice(availEnemyList, p = availEnemyAppearRate)])
-    else:
+    else:       #Combat
         dummy.__dict__ = enemy.__dict__.copy()
         print('%s %s' % ('You are in combat with', Fore.RED + Back.LIGHTWHITE_EX + Style.BRIGHT + dummy.name + Fore.RESET + Back.RESET + Style.RESET_ALL))
         heroAttackInterval = speedMultiplier * combatSpeedMultiplier / hero.speed
         enemyAttackInterval = speedMultiplier * combatSpeedMultiplier / dummy.speed
         while heroDeathCounter == 0 and enemyDeathCounter == 0:
-            while heroAttackInterval > 0 and enemyAttackInterval > 0:
-                if heroAttackInterval < enemyAttackInterval:
-                    time.sleep(heroAttackInterval)
-                    damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + hero.attack) * (1 - (dummy.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
-                    dummy.currentHP -= damageDone
-                    damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
-                    if dummy.currentHP <= 0:
-                        print (hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(dummy.maxHP)))
-                        enemyDeathCounter = 1
-                        print(dummy.name, 'has been defeated. You are victorious!')
-                        if random.random() <= lootChance:
-                            loot(dummy.level, 'combatLoot')
-                        hero.exp += (dummy.exp * expMultiplier)
-                        lvlupCheck()
-                        combatOn = 0
-                        break                     
-                    else:
-                        print(hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(dummy.currentHP), math.ceil(dummy.maxHP)))
-                        time.sleep(heroAttackInterval) 
-                    enemyAttackInterval -= heroAttackInterval
-                    heroAttackInterval = speedMultiplier * combatSpeedMultiplier / hero.speed
-                elif heroAttackInterval > enemyAttackInterval:
-                    time.sleep(enemyAttackInterval)
-                    damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + dummy.attack) * (1 - (hero.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
-                    hero.currentHP -= damageDone
-                    damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
-                    if hero.currentHP <= 0:
-                        print (dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(hero.maxHP)))
-                        heroDeathCounter = 1
-                        combatOn = 0
-                        print(hero.name, 'has fallen')
-                        print('%s\n%s\n%s\n' % (line, Fore.GREEN + Style.BRIGHT + "Press enter to restart the game." + Fore.RESET + Style.RESET_ALL, line))
-                        input()
-                        winsound.Beep(900, 200)
-                        main()                    
-                    else:            
-                        print(dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(hero.currentHP), math.ceil(hero.maxHP)))
-                        time.sleep(enemyAttackInterval)               
-                    heroAttackInterval -= enemyAttackInterval
-                    enemyAttackInterval = speedMultiplier * combatSpeedMultiplier / dummy.speed
+            if heroAttackInterval < enemyAttackInterval:        #Hero attacks
+                time.sleep(heroAttackInterval)
+                damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + hero.attack) * (1 - (dummy.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
+                dummy.currentHP -= damageDone
+                damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
+                if dummy.currentHP <= 0:        #Victory
+                    print (hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(dummy.maxHP)))
+                    enemyDeathCounter = 1
+                    print(dummy.name, 'has been defeated. You are victorious!')
+                    if random.random() <= lootChance:
+                        loot(dummy.level, 'combatLoot')
+                    hero.exp += (dummy.exp * expMultiplier)
+                    lvlupCheck()
+                    combatOn = 0
+                    break                     
                 else:
-                    if random.random() < 0.5:
-                        heroAttackInterval += 0.01
-                    else:
-                        enemyAttackInterval += 0.01 
+                    print(hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(dummy.currentHP), math.ceil(dummy.maxHP)))
+                    time.sleep(heroAttackInterval) 
+                enemyAttackInterval -= heroAttackInterval
+                heroAttackInterval = speedMultiplier * combatSpeedMultiplier / hero.speed
+            elif heroAttackInterval > enemyAttackInterval:          #Enemy Attacks
+                time.sleep(enemyAttackInterval)
+                damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + dummy.attack) * (1 - (hero.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
+                hero.currentHP -= damageDone
+                damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
+                if hero.currentHP <= 0:         #Defeat
+                    print (dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(hero.maxHP)))
+                    heroDeathCounter = 1
+                    combatOn = 0
+                    print(hero.name, 'has fallen')
+                    print('%s\n%s\n%s\n' % (line, Fore.GREEN + Style.BRIGHT + "Press enter to restart the game." + Fore.RESET + Style.RESET_ALL, line))
+                    input()
+                    winsound.Beep(900, 200)
+                    main()                    
+                else:            
+                    print(dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(hero.currentHP), math.ceil(hero.maxHP)))
+                    time.sleep(enemyAttackInterval)               
+                heroAttackInterval -= enemyAttackInterval
+                enemyAttackInterval = speedMultiplier * combatSpeedMultiplier / dummy.speed
+            else:
+                if random.random() < 0.5:
+                    heroAttackInterval += 0.01
+                else:
+                    enemyAttackInterval += 0.01 
 
 def lvlupCheck():
     if hero.exp >= hero.maxExp:
@@ -340,17 +338,17 @@ def lvlupCheck():
 
 #Events
 def encounter():
-    print(Fore.RED+"Debug - encounter function was called"+Fore.RESET)
+    print(Fore.RED+"DebugLog - encounter function was called"+Fore.RESET)
 
 def event():
     randomNumber = random.randrange(10000)
     if randomNumber < 10000:
         shop()
     else:
-        print(Fore.RED+"Debug - event function was called"+Fore.RESET)
+        print(Fore.RED+"DebugLog - event function was called"+Fore.RESET)
 
 def story():
-    print(Fore.RED+"Debug - story function was called"+Fore.RESET)
+    print(Fore.RED+"DebugLog - story function was called"+Fore.RESET)
 
 def shop():
     print(str3)
