@@ -2,23 +2,24 @@ import random, time, threading, sys, math, winsound, numpy
 from colorama import init, Fore, Back, Style
 init(convert=True, autoreset=False)
 
-version = '0.0.6'
+version = '0.0.7'
 author = 'ls1088'
-print(Fore.GREEN + Style.BRIGHT + "Project101, \nVersion", version, "\nAuthor:", author, "\nBGM: Hatsune Miku - (UNICODEPLACEHOLDER).\nCurrent combat system is fully automatic.\nThere is no plan to build a GUI for this application yet." + Fore.RESET + Style.RESET_ALL + "\n\nWelcome to (unnamed game)")
+print(Fore.GREEN + Style.BRIGHT + "Project101, \nVersion", version, "\nAuthor:", author,
+      "\nBGM: Hatsune Miku - (UNICODEPLACEHOLDER).\nCurrent combat system is fully "
+      "automatic.\nThere is no plan to build a GUI for this application yet." + Fore.RESET +
+      Style.RESET_ALL + "\n\nWelcome to (unnamed game)")
 time.sleep(0.1)
 
 '''
 TRIGGERS, VARIABLES AND SETTINGS
 '''
 ###################################
-expMultiplier = 1
-#Amount of exp gained. 1 = Base amount.
-defenceReductionMultiplier = 0.06   
-#Every point of defence is equal to 6% effective HP increase. (Same with wc3 and dota) Due to change in the future.
-speedModifier = 1
-#Changes combat speed, higher = slower. Value being set too low could result in garbled text output. Do not set to 0.
-lootChance = 1
-#Chance of calling loot function after combat victory. 1 = Always, 0 = Never.
+expMultiplier = 1   #Amount of exp gained. 1 = Base amount.
+defenceReductionMultiplier = 0.06   #Every point of defence is equal to 6% effective HP
+# increase. (Same with wc3 and dota) Due to change in the future.
+speedMultiplier = 1     #Changes general speed, higher = slower. Do not set to 0.
+combatSpeedMultiplier = 0.5     #Combat speed mult. Do not set to 0.
+lootChance = 1      #Chance of calling loot function after combat victory. 1 = Always, 0 = Never.
 gold = 0
 enemyDeathCounter = 0
 heroDeathCounter = 0
@@ -37,16 +38,19 @@ enemyNameDict = {}
 #DEBUGGING SETTINGS
 options = {'explore': 1, 'rest': 2, 'inventory': 8, 'check stats': 9, 'help': 0}
 expMultiplier = 1
-speedModifier = 1
+speedMultiplier = 1
+combatSpeedMultiplier = 0.5
 lootChance = 1
 inventory = {'giant hammer':1, 'potion':1, 'strong potion':1}
 
-if expMultiplier != 1 or speedModifier !=1 or lootChance != 1 or len(inventory) != 0:
+if expMultiplier != 1 or speedMultiplier !=1 or combatSpeedMultiplier != 0.5 or lootChance != 1 or len(inventory) != 0:
     print(Fore.RED, Style.BRIGHT, "\nWARNING: CUSTOM SETTINGS DETECTED.")
     if expMultiplier != 1:
         print ("Exp multiplier:", expMultiplier)
-    if speedModifier != 1:
-        print ("Combat speed:", speedModifier)
+    if speedMultiplier != 1:
+        print ("Speed multiplier:", speedMultiplier)
+    if combatSpeedMultiplier != 0.5:
+        print ("Combat speed multiplier:", combatSpeedMultiplier)
     if lootChance != 1:
         print ("Loot chance:", lootChance)
     if len(inventory) != 0:
@@ -139,12 +143,13 @@ class stats():
         self.maxExp = maxExp
         self.level = level
         self.weapon = weapon
-        if name != 'PLACEHOLDER' and name != 'COMBAT PLACEHOLDER TARGET':
+        if name != 'PLACEHOLDER' and name != 'COMBAT PLACEHOLDER':
             enemyAppearRateDict[name] = appearRate
             enemyNameDict[name] = self
 
 hero = stats('PLACEHOLDER', 100, 100, 10, 0, 1, 0, 100, 1, none, 0)
-dummy = stats('COMBAT PLACEHOLDER TARGET', 'CURRENT HP', 'MAX HP', 'ATTACK', 'DEFENCE', 'SPEED', 'EXP', 'MAXEXP', 'LEVEL', 'PLACEHOLDERWEAPON', 0)
+dummy = stats('COMBAT PLACEHOLDER', 'CURRENT HP', 'MAX HP', 'ATTACK', 'DEFENCE', 'SPEED', 'EXP', 'MAXEXP', 'LEVEL', 'PLACEHOLDERWEAPON', 0)
+
 greenSlime = stats('green slime', 20, 20, 5, 0, 0.66, 33, 2**31-1, 1, 'none', 2000)
 bat = stats('bat', 25, 25, 7, 1, 1.19, 40, 2**31-1, 1, 'none', 1000)
 yellowSlime = stats('yellow slime', 35, 35, 10, 1, 0.69, 60, 2**31-1, 2, 'none', 1000)
@@ -261,9 +266,8 @@ def combat(enemy):
     heroDeathCounter = 0
     combatOn = 1    
     availEnemyList = []
-    availEnemyAppearRate = []    
-    #weighted random choice     
-    if enemy == 'random':
+    availEnemyAppearRate = []         
+    if enemy == 'random':       #Weighted random choice
         for i in enemyAppearRateDict:
             if enemyNameDict[i].level <= hero.level + 1 and enemyNameDict[i].level >= hero.level - 3:
                 availEnemyList.append(i)
@@ -272,64 +276,57 @@ def combat(enemy):
         for i in enumerate(availEnemyAppearRate):
             availEnemyAppearRate[list(i)[0]] = availEnemyAppearRate[list(i)[0]] / availEnemyAppearRate_Total
         combat(enemyNameDict[numpy.random.choice(availEnemyList, p = availEnemyAppearRate)])
-    else:
+    else:       #Combat
         dummy.__dict__ = enemy.__dict__.copy()
-        print('%s %s' % ('You are in combat with', dummy.name))
-        time.sleep(speedModifier)
-        #dummy.name = (Fore.RED + Back.LIGHTWHITE_EX + Style.BRIGHT + dummy.name + Fore.RESET + Back.RESET + Style.RESET_ALL)
-        if random.random() < 0.5:
-            threading.Thread(target = heroAttack).start()
-            time.sleep(0.05)
-            threading.Thread(target = enemyAttack).start()
-        else:
-            threading.Thread(target = enemyAttack).start()
-            time.sleep(0.05)
-            threading.Thread(target = heroAttack).start()        
-
-def heroAttack():
-    global enemyDeathCounter, heroDeathCounter, combatOn
-    while heroDeathCounter == 0:
-        if dummy.currentHP <= 0:  #Victory
-            enemyDeathCounter = 1
-            print(dummy.name, 'has been defeated. You are victorious!')
-            if random.random() <= lootChance:
-                loot(dummy.level, 'combatLoot')
-            hero.exp += (dummy.exp * expMultiplier)
-            lvlupCheck()
-            combatOn = 0
-            break
-        else:
-            damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + hero.attack) * (1 - (dummy.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
-            dummy.currentHP -= damageDone
-            damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
-            if dummy.currentHP <= 0:
-                print (hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(dummy.maxHP)))
+        print('%s %s' % ('You are in combat with', Fore.RED + Back.LIGHTWHITE_EX + Style.BRIGHT + dummy.name + Fore.RESET + Back.RESET + Style.RESET_ALL))
+        heroAttackInterval = speedMultiplier * combatSpeedMultiplier / hero.speed
+        enemyAttackInterval = speedMultiplier * combatSpeedMultiplier / dummy.speed
+        while heroDeathCounter == 0 and enemyDeathCounter == 0:
+            if heroAttackInterval < enemyAttackInterval:        #Hero attacks
+                time.sleep(heroAttackInterval)
+                damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + hero.attack) * (1 - (dummy.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
+                dummy.currentHP -= damageDone
+                damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
+                if dummy.currentHP <= 0:        #Victory
+                    print (hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(dummy.maxHP)))
+                    enemyDeathCounter = 1
+                    print(dummy.name, 'has been defeated. You are victorious!')
+                    if random.random() <= lootChance:
+                        loot(dummy.level, 'combatLoot')
+                    hero.exp += (dummy.exp * expMultiplier)
+                    lvlupCheck()
+                    combatOn = 0
+                    break                     
+                else:
+                    print(hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(dummy.currentHP), math.ceil(dummy.maxHP)))
+                    time.sleep(heroAttackInterval) 
+                enemyAttackInterval -= heroAttackInterval
+                heroAttackInterval = speedMultiplier * combatSpeedMultiplier / hero.speed
+            elif heroAttackInterval > enemyAttackInterval:          #Enemy Attacks
+                time.sleep(enemyAttackInterval)
+                damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + dummy.attack) * (1 - (hero.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
+                hero.currentHP -= damageDone
+                damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
+                if hero.currentHP <= 0:         #Defeat
+                    print (dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(hero.maxHP)))
+                    heroDeathCounter = 1
+                    combatOn = 0
+                    print(hero.name, 'has fallen')
+                    print('%s\n%s\n%s\n' % (line, Fore.GREEN + Style.BRIGHT + "Press enter to restart the game." + Fore.RESET + Style.RESET_ALL, line))
+                    input()
+                    winsound.Beep(900, 200)
+                    main()                    
+                else:            
+                    print(dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(hero.currentHP), math.ceil(hero.maxHP)))
+                    time.sleep(enemyAttackInterval)               
+                heroAttackInterval -= enemyAttackInterval
+                enemyAttackInterval = speedMultiplier * combatSpeedMultiplier / dummy.speed
             else:
-                print(hero.name, 'hit', dummy.name, 'for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(dummy.currentHP), math.ceil(dummy.maxHP)))
-                time.sleep(speedModifier / hero.speed)
+                if random.random() < 0.5:
+                    heroAttackInterval += 0.01
+                else:
+                    enemyAttackInterval += 0.01 
 
-def enemyAttack():
-    global enemyDeathCounter, heroDeathCounter, combatOn
-    while enemyDeathCounter == 0:
-        if hero.currentHP <= 0:  #Defeat
-            heroDeathCounter = 1
-            combatOn = 0
-            print(hero.name, 'has fallen')
-            print('%s\n%s\n%s\n' % (line, Fore.GREEN + Style.BRIGHT + "Press enter to restart the game." + Fore.RESET + Style.RESET_ALL, line))
-            input()
-            winsound.Beep(900, 200)
-            main()
-            break
-        else:
-            damageDone = math.floor((random.uniform(-0.15, 0.15) + 1) * (random.uniform(-1, 1) + dummy.attack) * (1 - (hero.defence * defenceReductionMultiplier) / (1 + defenceReductionMultiplier)))
-            hero.currentHP -= damageDone
-            damageDone = (Fore.RED + Style.BRIGHT + str(damageDone) + Fore.RESET + Style.RESET_ALL)
-            if hero.currentHP <= 0:
-                print (dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (0, math.ceil(hero.maxHP)))
-            else:            
-                print(dummy.name, 'hit you for', damageDone, 'points! HP:', '(%s/%s)' % (math.ceil(hero.currentHP), math.ceil(hero.maxHP)))
-                time.sleep(speedModifier / dummy.speed)
-    
 def lvlupCheck():
     if hero.exp >= hero.maxExp:
         hero.exp -= hero.maxExp
@@ -340,22 +337,22 @@ def lvlupCheck():
         hero.attack += 1
         hero.defence += 1
         print('%s\n%s\n%s' % (line, Fore.GREEN + Back.GREEN + Style.BRIGHT + 'You have leveled up! ' + str(int(hero.level) - 1) + ' ---> ' + str(hero.level) + Fore.RESET + Back.RESET + Style.RESET_ALL, line))
-        time.sleep(speedModifier)
+        time.sleep(speedMultiplier)
         checkStats()
 
 #Events
 def encounter():
-    print(Fore.RED+"Debug - encounter function was called"+Fore.RESET)
+    print(Fore.RED+"DebugLog - encounter function was called"+Fore.RESET)
 
 def event():
     randomNumber = random.randrange(10000)
     if randomNumber < 10000:
         shop()
     else:
-        print(Fore.RED+"Debug - event function was called"+Fore.RESET)
+        print(Fore.RED+"DebugLog - event function was called"+Fore.RESET)
 
 def story():
-    print(Fore.RED+"Debug - story function was called"+Fore.RESET)
+    print(Fore.RED+"DebugLog - story function was called"+Fore.RESET)
 
 def shop():
     print(str3)
@@ -375,7 +372,7 @@ def loot(lootLevel, lootMessage):
         goldGained = random.randrange(1 + lootLevel, 10 + 2*lootLevel)
         print("Your enemy dropped" + Fore.YELLOW + Style.BRIGHT, goldGained, Fore.RESET + Style.RESET_ALL + "gold.")
         gold += goldGained         
-        time.sleep(speedModifier)
+        time.sleep(speedMultiplier)
     if random.random() < 0.5:
         for i in hpPotionDropDict:
             if hpPotionNameDict[i].level <= lootLevel:
@@ -412,7 +409,7 @@ def loot(lootLevel, lootMessage):
             inventory[droppedItem] += 1
         else:
             inventory[droppedItem] = 1
-        time.sleep(speedModifier)
+        time.sleep(speedMultiplier)
 
 def checkInventory():
     useItem = 'placeholdertext'
@@ -481,11 +478,11 @@ def main():
     bgm() #Testing sound
     hero.name = askAdventure('%s\n%s' % (line, q1))
     askAdventure(str1, 'explore', 'rest', 'inventory', 'check stats', 'help')
-    time.sleep(speedModifier)
+    time.sleep(speedMultiplier)
     while True:
         while combatOn == 0 and heroDeathCounter == 0: 
             askAdventure(str2, 'explore', 'rest', 'inventory', 'check stats', 'help')
-            time.sleep(speedModifier)
+            time.sleep(speedMultiplier * 0.5)
             
 if __name__ == '__main__':
     main()

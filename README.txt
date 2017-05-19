@@ -42,13 +42,12 @@ NOTES:
 Current progress:
 Real time 1v1 automated combat
 Working basic menu dialogue
-Some enemies
 Experience leveling system using math.lgamma based function
 
 Needs improvement:
-BGM that doesn't fit
-Expand on weapons
-Balancing enemies
+BGM that doesn't fit and violates copyright law
+Balance in all things
+GUI
 
 #To-do list:
 More Dialogue Functions -> Events -> Story ->                GUI -> Sprites
