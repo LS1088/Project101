@@ -27,7 +27,7 @@ Stable release in /binaries/
 ⠚⠿⠤⠤⠤⠤⠶⢺⠏⣠⡾⠁⢻⢀⡇⢀⡇⢀⢀⢀⢸⢀⢀⢀⢀⣆⡔⢠⢢⢆⠆⢀⢀⢀⢀⢀⢀⢀⣀⣀⣀⢀⢀⣀⡴⠊⡼⢰⢣⠇⡏⢀⣿⡶⣄⣀⣀⣸⣟⡳⢄
 ⢀⢀⢀⢀⢀⢀⣠⠿⢾⡋⢀⢀⠸⡆⠘⠄⡇⢀⢀⢀⠈⣇⢀⢀⣞⡾⢡⢯⡏⡞⢀⢸⣷⣶⣶⣶⣿⣿⣿⣿⣿⣿⣿⣿⣷⢀⠁⢀⢀⢀⢀⢀⣿⣇⢀⠈⠉⠉⠉
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢳⢀⢀⢰⠻⣆⡀⣧⢀⢀⢀⢀⠸⡀⠘⡼⠁⠏⠚⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢀⢀⢀⢀⢀⢀⢠⡇⣿
-⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢷⢀⣿⡀⠈⠙⣿⢀⢀⢀⢀⢀⢧⢀⢀⢀⢀⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⢀⢀⢀⢀⢀⢠⡟⢀⣿
+⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢷⢀⣿⡀⠈⠙⣿⢀⢀⢀⢀⢀⢧⢀⢀⢀⢀⢀⢀⢀⢀⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡏⢀⢀⢀⢀⢀⢠⡟⢀⣿  
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⠘⣾⠃⢳⡀⢀⣿⢀⢀⢀⢀⢀⠈⡆⢀⢀⢀⢀⢀⢀⢀⢻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢀⢀⢀⢀⢀⣴⠏⢀⢀⣿
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⠙⢀⢀⠳⣄⢸⡆⢀⢀⢀⢀⢀⠘⡄⢀⢀⢀⢀⢀⢀⠈⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⠁⢀⢀⢀⡴⠛⠁⢀⢀⢀⡇
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⠙⢾⣧⢀⢀⢀⡄⢀⢽⢾⡦⣄⡀⢀⢀⢀⢀⠈⠻⢿⣿⣿⣿⣿⣿⠿⠋⢀⣠⡴⠞⢫⣧⢀⢀⢀⢀⢀⡇
@@ -39,13 +39,8 @@ Stable release in /binaries/
 ----------------------------
 NOTES:
 ----------------------------
-Current progress:
-Real time 1v1 automated combat
-Working basic menu dialogue
-Experience leveling system using math.lgamma based function
-
 Needs improvement:
-BGM that doesn't fit and violates copyright law
+BGM
 Balance in all things
 GUI
 
@@ -53,13 +48,13 @@ GUI
 More Dialogue Functions -> Events -> Story ->                GUI -> Sprites
                                             |
                                             V
-        Items <- Inventory -> Merchants <- NPC               BGM <-> SFX
-          |
-          V
-       Weapons -> Effects -> Skills
+                                        Merchants <- NPC               BGM -> SFX
+          Effects -> Skills
 ----------------------------
 CHANGELOG:
 ----------------------------
+v0.0.9, 20/05/17 - Improved class structures, changed music file types from .wav to .ogg for less size. BGM changed.
+v0.0.8, 19/05/17 - Split up main file into 3
 v0.0.7, 18/05/17 - Multiple optimizations(mainly need for multithreading removed). As a side effect of merging functions a few of them have became extremely long.
 v0.0.6, 05/05/17 - Added inventory
 v0.0.5, 05/05/17 - Replaced BGM.wav, finished item drops, added new items, added colored text in terminal output.
