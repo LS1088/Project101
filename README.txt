@@ -1,6 +1,27 @@
 ﻿----------------------------
-Shitty project that may one day turn into a real game and make some $$$.
+Shitty game that may one day turn into a real game and make some $$$.
 Stable release in /binaries/
+----------------------------
+NOTES:
+----------------------------
+GUI under progress
+
+More Dialogue Functions -> Events -> Story ->                GUI -> Sprites
+                                            |
+                                            V
+                                        Merchants <- NPC               BGM -> SFX
+          Effects -> Skills
+----------------------------
+CHANGELOG:
+----------------------------
+v0.0.9, 20/05/17 - Improved class structures, changed music file types from .wav to .ogg for less size. BGM changed.
+v0.0.8, 19/05/17 - Split up main file into 3
+v0.0.7, 18/05/17 - Multiple optimizations(mainly need for multithreading removed). As a side effect of merging functions a few of them have became extremely long.
+v0.0.6, 05/05/17 - Added inventory
+v0.0.5, 05/05/17 - Replaced BGM.wav, finished item drops, added new items, added colored text in terminal output.
+v0.0.4, 04/05/17 - Added support for windows7 system.
+v0.0.3, 02/05/17 - None
+
 ----------------------------
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⣀⣠⡤⠤⠶⠦⠤⣤⣀⡀
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⣀⡠⠖⠋⠉⢀⢀⢀⢀⢀⢀⢀⠈⠉⠓⠶⡦⢤⣀
@@ -36,27 +57,3 @@ Stable release in /binaries/
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⠈⢧⢀⡇⣴⣿⣿⣷⡀⢀⢀⢀⣀⣀⣙⢦⡀⢀⢸⢃⣀⣀⢀⣼⣿⣿⣿⡇⢀⠉
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⠑⣿⣿⣿⣿⣿⣿⣆⢰⡍⠉⠉⠉⢉⣻⡷⣿⡁⢀⢀⢻⣿⣿⣿⣿⣷⡀
 ⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢀⢠⣿⣿⣿⣿⣿⣿⣿⣿⣧⢀⢀⠠⠚⣹⣿⣿⡙⠳⢀⠘⣿⣿⣿⣿⣿⣧
-----------------------------
-NOTES:
-----------------------------
-Needs improvement:
-BGM
-Balance in all things
-GUI
-
-#To-do list:
-More Dialogue Functions -> Events -> Story ->                GUI -> Sprites
-                                            |
-                                            V
-                                        Merchants <- NPC               BGM -> SFX
-          Effects -> Skills
-----------------------------
-CHANGELOG:
-----------------------------
-v0.0.9, 20/05/17 - Improved class structures, changed music file types from .wav to .ogg for less size. BGM changed.
-v0.0.8, 19/05/17 - Split up main file into 3
-v0.0.7, 18/05/17 - Multiple optimizations(mainly need for multithreading removed). As a side effect of merging functions a few of them have became extremely long.
-v0.0.6, 05/05/17 - Added inventory
-v0.0.5, 05/05/17 - Replaced BGM.wav, finished item drops, added new items, added colored text in terminal output.
-v0.0.4, 04/05/17 - Added support for windows7 system.
-v0.0.3, 02/05/17 - None
