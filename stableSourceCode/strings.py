@@ -4,7 +4,7 @@ init(convert=True, autoreset=False)
 '''
 STRINGS
 '''
-infoStr = "\nBGM: Hatsune Miku - (UNICODEPLACEHOLDER).\nCombat system is fully automatic."
+infoStr = "\nCombat system is fully automatic."
 
 greetingStr = "\n\nTHIS IS A GREETING MESSAGE"
 
